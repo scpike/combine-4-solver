@@ -10,9 +10,9 @@ class Solver
   end
   
   def generate_equations
-    potential_input_orders = inputs.permutation.collect.uniq
+    potential_input_orders = inputs.permutation.collect.to_a.uniq
     # All the ways we can order our operators into the input-1 slots
-    potential_operator_orders = (@operators * (@inputs.length-1)).combination(@inputs.length-1).collect.uniq
+    potential_operator_orders = (@operators * (@inputs.length-1)).combination(@inputs.length-1).collect.to_a.uniq
 
     i=0
     for input_set in potential_input_orders
@@ -26,7 +26,6 @@ class Solver
         end
       end
     end
-    puts "#{i} equations to try"
   end
 
   def find_answer(target=24)
@@ -37,9 +36,9 @@ class Solver
       end
     end
     if answer 
-      puts "#{answer.print} = #{answer.result}"
+      puts "#{inputs.inspect} - #{answer.print} = #{answer.result}"
     else
-      puts "No Answer Found"
+      puts "#{inputs.inspect} - No Answer Found"
     end
   end
   # Take a set and generate all the distinct sets of subsets of <set> such that the subsets collectively contain exactly all elements of <set> 
@@ -140,9 +139,10 @@ class Node
   end
   
 end
-inputs = eval(ARGV[0])
+inputs = ARGV[0]
 
-solver = Solver.new(inputs)
-
-solver.generate_equations
-solver.find_answer(24)
+File.open(inputs).each do |line|
+  solver = Solver.new(eval(line))
+  solver.generate_equations
+  solver.find_answer(24)
+end
